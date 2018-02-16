@@ -1,16 +1,15 @@
-"use strict";
+'use strict';
 
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || 'development';
 
-const webpack = require("webpack");
-const path = require("path");
-const webpackUMDExternal = require("webpack-umd-external");
+const webpack = require('webpack');
+const path = require('path');
+const webpackUMDExternal = require('webpack-umd-external');
 
 const pluginsList = [];
-const outputFileName =
-  env === "production" ? "swipablecomp.min.js" : "swipablecomp.js";
+const outputFileName = env === 'production' ? 'swipablecomp.min.js' : 'swipablecomp.js';
 
-if (env === "production") {
+if (env === 'production') {
   pluginsList.push(
     new webpack.optimize.UglifyJsPlugin({
       compress: { warnings: false },
@@ -20,23 +19,25 @@ if (env === "production") {
 }
 
 const config = {
-  entry: path.join(__dirname, "src/swipablecomp.js"),
-
+  entry: {
+    swipablecomp: path.join(__dirname, 'src/swipablecomp.js'),
+    swipelib: path.join(__dirname, 'src/swipelib.js')
+  },
   output: {
-    path: path.join(__dirname, "dist"),
-    filename: outputFileName,
-    library: "SwipableComp",
-    libraryTarget: "umd",
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].js',
+    library: 'SwipableComp',
+    libraryTarget: 'umd',
     umdNamedDefine: true
   },
 
   externals: webpackUMDExternal({
-    react: "React",
-    "swipe-js-iso": "Swipe"
+    react: 'React',
+    shallowequal: 'shallowequal'
   }),
 
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: ['.js', '.jsx']
   },
 
   plugins: pluginsList,
@@ -44,15 +45,15 @@ const config = {
   module: {
     rules: [
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.jsx?$/,
-        loader: "eslint-loader",
+        loader: 'eslint-loader',
         exclude: /node_modules/
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: 'babel-loader'
       }
     ]
   }

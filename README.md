@@ -56,4 +56,4 @@ ReactDOM.render(
 - `decal: ?Number` - 
 - `navigation: ?Bool` - 
 - `vitesse: ?Number` - speed
-- `onChangepourc: ?Func` - Callback function - slide %
+- `onChangepourc: ?Func` - Callback function - (percent, end, speed)

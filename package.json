@@ -1,6 +1,6 @@
 {
   "name": "swipablereact",
-  "version": "1.0.1",
+  "version": "1.0.17",
   "description": "Swipable component for React",
   "homepage": "https://github.com/titeya/swipablereact.git",
   "keywords": ["react", "component", "carousel", "swipe", "react-component"],
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git://github.com/titeya/swipablereact.git"
   },
-  "main": "index.js",
+  "main": "dist/swipablecomp.js",
   "license": "MIT",
   "dependencies": {
     "prop-types": "^15.6.0",
@@ -45,7 +45,7 @@
     "build-dist-prod": "NODE_ENV=production webpack --config webpack.config --progress --colors -p",
     "build-demo":
       "NODE_ENV=production browserify ./demo/index.js -t [ babelify --presets [ es2015 stage-0 react ] --plugins [ transform-object-assign ] ] | uglifyjs -cm > ./demo/bundle.min.js",
-    "build-babel": "babel ./src/swipablecomp.js --out-file index.js",
+    "build-babel": "babel ./src --out-file index.js",
     "lint": "eslint ./src",
     "lint-dev": "eslint --fix ./src",
     "test": "echo \"Comming soon ;)\" && exit 0"

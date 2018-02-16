@@ -6,9 +6,11 @@ import Swipeable from './swipelib';
 class SwipableComp extends Component {
   constructor(props) {
     super(props);
-    this.state = { index: 0 };
+    const { index } = this.props;
+    this.state = { index: index };
     this.direction = 'left';
     this.lastUpdateCall = null;
+    this.time = false;
     this.style = {
       overflow: 'hidden',
       position: 'relative',
@@ -33,10 +35,13 @@ class SwipableComp extends Component {
   }
 
   componentDidMount() {
+    const { index } = this.props;
     window.addEventListener('resize', this.updatewindowsize, { passive: true });
     this.updatewindowsize();
+    if (index !== 0) this.Swipe(index, false);
   }
   componentWillUnmount() {
+    if (this.time) clearTimeout(this.time);
     window.removeEventListener('resize', this.updatewindowsize);
   }
   isTouchDevice = () => {
@@ -45,14 +50,14 @@ class SwipableComp extends Component {
   updatewindowsize = () => {
     this.swipe = this.refs.swipecont.style;
     this.swipeWidth = this.refs.swipecont.offsetWidth;
-    this.distance = this.swipeWidth / 2;
+    this.distance = this.props.distance ? this.props.distance : this.swipeWidth / 2;
     this.swipenbs = this.props.children instanceof Array ? this.props.children.length : 1;
     this.maxswipe =
       this.props.children instanceof Array ? `-${(this.swipenbs - 1) * this.swipeWidth}` : 0;
     this.maxzone = this.props.children instanceof Array ? `-${this.swipenbs * this.swipeWidth}` : 0;
     if (this.props.decal !== 0)
       this.maxswipe = Number(this.maxswipe) + this.props.decal * (this.swipenbs - 1);
-    this.Swipe(this.state.index, 0);
+    this.Swipe(this.state.index, false);
   };
 
   listElem() {
@@ -78,8 +83,10 @@ class SwipableComp extends Component {
     });
   }
 
-  Swipe(index) {
-    const { vitesse } = this.props;
+  Swipe(index, anim = true) {
+    let { vitesse } = this.props;
+    if (!anim) vitesse = 0;
+
     const cont = this.swipenbs > 1 ? this.props.children : [this.props.children];
 
     if (this.lastUpdateCall) cancelAnimationFrame(this.lastUpdateCall);
@@ -95,20 +102,22 @@ class SwipableComp extends Component {
       transform: `translate3d(${decal}px,0,0)`
     });
     this.ready = false;
-    setTimeout(() => {
+    if (this.time) clearTimeout(this.time);
+    this.time = setTimeout(() => {
       this.ready = true;
+      this.props.onChangeIndex(index);
     }, vitesse);
 
     this.lastUpdateCall = null;
-    this.props.onChangeIndex(index);
     this.resultpourc(decal, true, index);
     this.setState({ index: index });
   }
 
   resultpourc(nb, end, index) {
+    const { vitesse } = this.props;
     const increment = end ? 0 : 100 * this.swipenbs * nb / this.maxzone;
     const pourc = end ? index * 100 : nb ? Math.round(increment) : 0;
-    this.props.onChangepourc(pourc, end);
+    this.props.onChangepourc(pourc, end, vitesse);
   }
 
   swiping(deltaX, velo, direction) {
@@ -267,7 +276,7 @@ SwipableComp.defaultProps = {
   iconLeft: '<',
   iconRigth: '>',
   resistance: true,
-  distance: 200,
+  distance: false,
   espace: 0,
   height: 'initial',
   position: 'relative',
@@ -278,6 +287,9 @@ SwipableComp.defaultProps = {
   navigation: false,
   vitesse: 500,
   onChangepourc: () => {
+    return false;
+  },
+  onChangeIndex: () => {
     return false;
   }
 };
@@ -293,7 +305,7 @@ SwipableComp.propTypes = {
   onChangeIndex: PropTypes.func,
   onChangepourc: PropTypes.func,
   resistance: PropTypes.bool,
-  distance: PropTypes.number,
+  distance: PropTypes.any,
   childBgColor: PropTypes.string,
   contBgColor: PropTypes.string,
   decal: PropTypes.number,
