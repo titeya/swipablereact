@@ -74,7 +74,7 @@ class SwipableComp extends Component {
             width: 'calc(100% - ' + decal + 'px )',
             marginRight: espaceR + 'px',
             flexShrink: 0,
-            backgroundColor: this.props.childBgColor
+            background: this.props.childBgColor
           }}
         >
           {elem}
@@ -121,60 +121,64 @@ class SwipableComp extends Component {
   }
 
   swiping(deltaX, velo, direction) {
-    if (direction === 'left' || direction === 'right') {
-      if (this.lastUpdateCall) cancelAnimationFrame(this.lastUpdateCall);
+    if (this.props.touch) {
+      if (direction === 'left' || direction === 'right') {
+        if (this.lastUpdateCall) cancelAnimationFrame(this.lastUpdateCall);
 
-      this.lastUpdateCall = requestAnimationFrame(() => {
-        this.direction = direction;
-        let translate = direction === 'left' ? -deltaX + this.position : deltaX + this.position;
+        this.lastUpdateCall = requestAnimationFrame(() => {
+          this.direction = direction;
+          let translate = direction === 'left' ? -deltaX + this.position : deltaX + this.position;
 
-        if (this.state.index === 0 && translate > 0)
-          translate = this.props.resistance
-            ? direction === 'left' ? -deltaX / 10 + this.position : deltaX / 10 + this.position
-            : 0;
+          if (this.state.index === 0 && translate > 0)
+            translate = this.props.resistance
+              ? direction === 'left' ? -deltaX / 10 + this.position : deltaX / 10 + this.position
+              : 0;
 
-        if (this.state.index === this.swipenbs - 1 && translate < this.maxswipe)
-          translate = this.props.resistance
-            ? direction === 'left' ? -deltaX / 10 + this.position : deltaX / 10 + this.position
-            : this.maxswipe;
+          if (this.state.index === this.swipenbs - 1 && translate < this.maxswipe)
+            translate = this.props.resistance
+              ? direction === 'left' ? -deltaX / 10 + this.position : deltaX / 10 + this.position
+              : this.maxswipe;
 
-        Object.assign(this.swipe, {
-          transition: 'none',
-          transform: `translate3d(${translate}px,0,0)`
+          Object.assign(this.swipe, {
+            transition: 'none',
+            transform: `translate3d(${translate}px,0,0)`
+          });
+          this.lastUpdateCall = null;
+          this.resultpourc(translate, false, this.state.index);
         });
-        this.lastUpdateCall = null;
-        this.resultpourc(translate, false, this.state.index);
-      });
-    } else {
-      this.direction = false;
+      } else {
+        this.direction = false;
+      }
     }
   }
   swiped(deltaX, velo) {
-    if (deltaX !== 0) {
-      switch (this.direction) {
-        case 'left':
-          if (this.state.index + 1 < this.swipenbs) {
-            deltaX > this.distance || (velo > 0.3 && deltaX > 20)
-              ? this.Swipe(this.state.index + 1)
-              : this.Swipe(this.state.index);
-          } else {
-            this.Swipe(this.state.index);
-          }
-          break;
+    if (this.props.touch) {
+      if (deltaX !== 0) {
+        switch (this.direction) {
+          case 'left':
+            if (this.state.index + 1 < this.swipenbs) {
+              deltaX > this.distance || (velo > 0.3 && deltaX > 20)
+                ? this.Swipe(this.state.index + 1)
+                : this.Swipe(this.state.index);
+            } else {
+              this.Swipe(this.state.index);
+            }
+            break;
 
-        case 'right':
-          if (this.state.index - 1 >= 0) {
-            deltaX < -this.distance || (velo > 0.3 && deltaX < -20)
-              ? this.Swipe(this.state.index - 1)
-              : this.Swipe(this.state.index);
-          } else {
-            this.Swipe(this.state.index);
-          }
-          break;
+          case 'right':
+            if (this.state.index - 1 >= 0) {
+              deltaX < -this.distance || (velo > 0.3 && deltaX < -20)
+                ? this.Swipe(this.state.index - 1)
+                : this.Swipe(this.state.index);
+            } else {
+              this.Swipe(this.state.index);
+            }
+            break;
 
-        default:
-          this.Swipe(this.state.index);
-          break;
+          default:
+            this.Swipe(this.state.index);
+            break;
+        }
       }
     }
   }
@@ -235,7 +239,7 @@ class SwipableComp extends Component {
           position: this.props.position,
           width: '100%',
           height: this.props.height,
-          backgroundColor: this.props.contBgColor
+          background: this.props.contBgColor
         }}
       >
         <Swipeable
@@ -285,6 +289,7 @@ SwipableComp.defaultProps = {
   contBgColor: 'black',
   decal: 0,
   navigation: false,
+  touch: true,
   vitesse: 500,
   onChangepourc: () => {
     return false;
@@ -310,6 +315,7 @@ SwipableComp.propTypes = {
   contBgColor: PropTypes.string,
   decal: PropTypes.number,
   espace: PropTypes.number,
-  navigation: PropTypes.bool
+  navigation: PropTypes.bool,
+  touch: PropTypes.bool
 };
 export default SwipableComp;

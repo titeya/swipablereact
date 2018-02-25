@@ -1,6 +1,6 @@
 {
   "name": "swipablereact",
-  "version": "1.0.17",
+  "version": "1.0.20",
   "description": "Swipable component for React",
   "homepage": "https://github.com/titeya/swipablereact.git",
   "keywords": ["react", "component", "carousel", "swipe", "react-component"],
