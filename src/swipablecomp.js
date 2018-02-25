@@ -238,8 +238,7 @@ class SwipableComp extends Component {
         style={{
           position: this.props.position,
           width: '100%',
-          height: this.props.height,
-          background: this.props.contBgColor
+          height: this.props.height
         }}
       >
         <Swipeable
@@ -263,7 +262,8 @@ class SwipableComp extends Component {
               flexDirection: 'row',
               display: 'flex',
               touchAction: 'pan-y',
-              willChange: 'transform'
+              willChange: 'transform',
+              background: this.props.contBgColor
             }}
           >
             {this.listElem()}
